@@ -80,7 +80,7 @@ contract ERC20UtilityManager is AccessControlUpgradeable {
 		address _tokenAddress,
 		address[] memory _recipients,
 		uint256[] memory _amounts
-	) public onlyPermited(BULK_ROLE) {
+	) public onlyPermited(BULK_ROLE) checkLength(_recipients, _amounts) {
 		for (uint8 i = 0; i < _recipients.length; i++) {
 			require(
 				_amounts[i] <= MAX_TRANSFER_AMOUNT,

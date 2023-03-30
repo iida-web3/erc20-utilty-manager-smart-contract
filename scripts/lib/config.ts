@@ -28,8 +28,10 @@ export const {
   USER5_ADDRESS,
   USER5_PRIVATE_KEY,
   ETHERSCAN_API_KEY,
-  IS_MAINNET
-
+  IS_MAINNET,
+  FIREBLOCKS_APIKEY,
+  VAULT_ACCOUNTIDS,
+  CHAIN_ID
 } = process.env;
 
 export const env = {
@@ -57,5 +59,7 @@ export const env = {
   fileExists("../../artifacts/contracts/Proxy.sol/ERC20UtilityManagerProxy.json") ? require("../../artifacts/contracts/Proxy.sol/ERC20UtilityManagerProxy.json").abi : "",
   DECIMALS: 18,
   IS_MAINNET: IS_MAINNET || "false",
-  CHAIN_ID: 80001
+  FIREBLOCKS_APIKEY: FIREBLOCKS_APIKEY || "",
+  VAULT_ACCOUNTIDS: VAULT_ACCOUNTIDS || "",
+  CHAIN_ID: Number(CHAIN_ID) || 0
 };

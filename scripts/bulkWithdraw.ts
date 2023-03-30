@@ -4,14 +4,13 @@ import { contracts } from "../typechain-types";
 import { getEstimate, getFeeData } from "./lib/web3Utility";
 import { BigNumber, providers, utils } from "ethers";
 
-async function main() {
+async function main(to: string[], amount: BigNumber[]) {
   const [deployer, user1, user2, user3] = await ethers.getSigners();
   const manager: contracts.ERC20UtilityManager = await ethers.getContractAt("ERC20UtilityManager", env.PROXY_CONTRACT_ADDRESS);
-  const amount: BigNumber = utils.parseUnits("1", "ether");
 
   const dataRow: string = await manager.interface.encodeFunctionData(
     "bulkWithdraw",
-    [env.TESTTOKEN_CONTRACT_ADDRESS, [user1.address,  user2.address,  user3.address], [amount, amount, amount]]
+    [env.TESTTOKEN_CONTRACT_ADDRESS, to, amount]
   );
 
   const nonce: number = await deployer.getTransactionCount();
@@ -38,7 +37,17 @@ async function main() {
   await tx.wait();
 }
 
-main()
+const array: string[] = new Array();
+for (let index = 0; index < 255; index++) {
+  const address = (index + 1).toString().padStart(40, "0");
+  array.push(`0x${address}`);
+}
+const to: string[] = array;
+
+console.log(to);
+const amount: BigNumber[] = new Array(255).fill(utils.parseUnits("0.01", "ether"));
+
+main(to, amount)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
