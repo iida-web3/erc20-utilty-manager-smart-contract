@@ -2,12 +2,12 @@ import { BigNumber, providers, utils } from "ethers";
 import { ethers } from "hardhat";
 import { env } from "./lib/config";
 import { contracts } from "../typechain-types";
-import { getEstimate, getFeeData } from "./lib/web3Utility";
+import { getEstimate, getFeeData, getSigners } from "./lib/web3Utility";
 
 async function main() {
-  const [deployer, user] = await ethers.getSigners();
+  const [deployer] = await getSigners();
   const manager: contracts.ERC20UtilityManager = await ethers.getContractAt("ERC20UtilityManager", env.PROXY_CONTRACT_ADDRESS);
-  const value: BigNumber = utils.parseUnits("100", "ether");
+  const value: BigNumber = utils.parseUnits("100", 8);
 
   const dataRow: string = await manager.interface.encodeFunctionData(
     "setMaxTransferAmount",

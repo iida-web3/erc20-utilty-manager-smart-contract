@@ -16,3 +16,9 @@ export async function fireblocksWeb3Provider() {
     note: "ERC20UtilityManager Deploy"
   });
 }
+
+export async function fireblocksSigner(): Promise<providers.JsonRpcSigner> {
+  const eip1193Provider = await fireblocksWeb3Provider();
+  const provider: providers.Web3Provider = await new providers.Web3Provider(eip1193Provider);
+  return await provider.getSigner();
+}

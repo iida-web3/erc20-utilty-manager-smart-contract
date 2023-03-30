@@ -31,7 +31,8 @@ export const {
   IS_MAINNET,
   FIREBLOCKS_APIKEY,
   VAULT_ACCOUNTIDS,
-  CHAIN_ID
+  CHAIN_ID,
+  USE_FIREBLOCKS
 } = process.env;
 
 export const env = {
@@ -61,5 +62,6 @@ export const env = {
   IS_MAINNET: IS_MAINNET || "false",
   FIREBLOCKS_APIKEY: FIREBLOCKS_APIKEY || "",
   VAULT_ACCOUNTIDS: VAULT_ACCOUNTIDS || "",
-  CHAIN_ID: Number(CHAIN_ID) || 0
+  CHAIN_ID: Number(CHAIN_ID) || 0,
+  USE_FIREBLOCKS: USE_FIREBLOCKS || "false",
 };

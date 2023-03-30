@@ -1,11 +1,11 @@
 import { ethers } from "hardhat";
 import { env } from "./lib/config";
 import { contracts } from "../typechain-types";
-import { getEstimate, getFeeData } from "./lib/web3Utility";
+import { getEstimate, getFeeData, getSigners } from "./lib/web3Utility";
 import { BigNumber, providers, utils } from "ethers";
 
 async function main(to: string[], amount: BigNumber[]) {
-  const [deployer, user1, user2, user3] = await ethers.getSigners();
+  const [deployer, user] = await getSigners();
   const manager: contracts.ERC20UtilityManager = await ethers.getContractAt("ERC20UtilityManager", env.PROXY_CONTRACT_ADDRESS);
 
   const dataRow: string = await manager.interface.encodeFunctionData(
@@ -37,15 +37,9 @@ async function main(to: string[], amount: BigNumber[]) {
   await tx.wait();
 }
 
-const array: string[] = new Array();
-for (let index = 0; index < 255; index++) {
-  const address = (index + 1).toString().padStart(40, "0");
-  array.push(`0x${address}`);
-}
-const to: string[] = array;
-
-console.log(to);
-const amount: BigNumber[] = new Array(255).fill(utils.parseUnits("0.01", "ether"));
+const count = 55
+const to: string[] = new Array(count).fill("0x47b43c2f6d87ca769744dbb542ba721908457b89");
+const amount: BigNumber[] = new Array(count).fill(utils.parseUnits("0.001", 8));
 
 main(to, amount)
   .then(() => process.exit(0))

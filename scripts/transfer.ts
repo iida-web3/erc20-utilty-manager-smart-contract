@@ -2,12 +2,12 @@ import { BigNumber, providers, utils } from "ethers";
 import { ethers } from "hardhat";
 import { env } from "./lib/config";
 import { contracts } from "../typechain-types";
-import { getEstimate, getFeeData } from "./lib/web3Utility";
+import { getEstimate, getFeeData, getSigners } from "./lib/web3Utility";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const [deployer] = await getSigners();
   const erc20: contracts.TestToken = await ethers.getContractAt("TestToken", env.TESTTOKEN_CONTRACT_ADDRESS);
-  const amount: BigNumber = utils.parseUnits("100000", "ether");
+  const amount: BigNumber = utils.parseUnits("76.20781586", 8);
 
   const dataRow: string = await erc20.interface.encodeFunctionData(
     "transfer",
