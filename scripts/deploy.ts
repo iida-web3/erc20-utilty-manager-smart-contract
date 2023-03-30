@@ -5,29 +5,40 @@ async function main() {
   if (env.IS_MAINNET === "false") {
     const TestToken = await ethers.getContractFactory("TestToken");
     const testToken = await TestToken.deploy();
-    await testToken.deployed();
+    const testTokenTx = await testToken.deployed();
 
     console.log(
-        `TestToken ${testToken.address}`
+        `
+        testTokenTx ${JSON.stringify(testTokenTx)}
+        TestToken ${testToken.address}
+        `
     );
   }
 
-  const ERC20UtiltyManager = await ethers.getContractFactory("ERC20UtiltyManager");
-  const erc20UtiltyManager = await ERC20UtiltyManager.deploy();
-  await erc20UtiltyManager.deployed();
+  const ERC20UtilityManager = await ethers.getContractFactory("ERC20UtilityManager");
+  const erc20UtilityManager = await ERC20UtilityManager.deploy();
+  const erc20UtilityManagerTx = await erc20UtilityManager.deployed();
 
   console.log(
-    `ERC20UtiltyManager deployed to ${erc20UtiltyManager.address}`
+      `
+      erc20UtilityManagerTx ${JSON.stringify(erc20UtilityManagerTx)}
+      ERC20UtilityManager deployed to ${erc20UtilityManager.address}
+      `
   );
 
-  const ERC20UtiltyManagerProxy = await ethers.getContractFactory("ERC20UtiltyManagerProxy");
-  const proxy = await ERC20UtiltyManagerProxy.deploy(
-    erc20UtiltyManager.address,
+  const ERC20UtilityManagerProxy = await ethers.getContractFactory("ERC20UtilityManagerProxy");
+  const proxy = await ERC20UtilityManagerProxy.deploy(
+    erc20UtilityManager.address,
     []
   );
-  await proxy.deployed();
+  const proxyTx = await proxy.deployed();
 
-  console.log("proxy contract deployed to: ", proxy.address);
+  console.log(
+      `
+        proxyTx ${JSON.stringify(proxyTx)}
+        proxy deployed to ${proxy.address}
+      `
+  );
 }
 
 main().catch((error) => {

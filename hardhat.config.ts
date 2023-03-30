@@ -6,7 +6,7 @@ import "@openzeppelin/hardhat-upgrades";
 import { env } from "./scripts/lib/config";
 
 const infuraApiKey = env.INFURA;
-const privateKey = env.PRIVATE_KEY;
+const privateKey = [env.PRIVATE_KEY, env.USER1_PRIVATE_KEY,env.USER2_PRIVATE_KEY,env.USER3_PRIVATE_KEY,env.USER4_PRIVATE_KEY];
 
 const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
@@ -17,19 +17,19 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url: `https://polygon-mumbai.infura.io/v3/${infuraApiKey}`,
-      accounts: [privateKey],
+      accounts: privateKey,
     },
     goerli: {
       url: `https://goerli.infura.io/v3/${infuraApiKey}`,
-      accounts: [privateKey],
+      accounts: privateKey,
     },
     sepolia: {
       url: `https://sepolia.infura.io/v3/${infuraApiKey}`,
-      accounts: [privateKey],
+      accounts: privateKey,
     },
     polygon: {
       url: "https://polygon-mainnet.infura.io/v3/647c7f609ecd46b58a534261c8f3e46b",
-      accounts: [privateKey],
+      accounts: privateKey,
     },
   },
   docgen: {

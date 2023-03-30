@@ -1,17 +1,11 @@
 # Solidity API
 
-## ERC20UtiltyManager
+## ERC20UtilityManager
 
 ### BULK_ROLE
 
 ```solidity
 bytes32 BULK_ROLE
-```
-
-### lastTransferTimestamp
-
-```solidity
-mapping(address => uint256) lastTransferTimestamp
 ```
 
 ### initialize
@@ -53,7 +47,7 @@ function setMaxTransferAmount(uint256 value) public
 ### maxTransferAmount
 
 ```solidity
-function maxTransferAmount() public view
+function maxTransferAmount() public view returns (uint256)
 ```
 
 ### setupRole

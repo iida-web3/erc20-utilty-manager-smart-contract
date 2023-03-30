@@ -1,17 +1,17 @@
-import { BigNumber, providers, Wallet, utils } from "ethers";
 import { ethers } from "hardhat";
 import { env } from "./lib/config";
 import { contracts } from "../typechain-types";
 import { getEstimate, getFeeData } from "./lib/web3Utility";
+import { providers } from "ethers";
 
 async function main() {
   const [deployer, user] = await ethers.getSigners();
   const manager: contracts.ERC20UtilityManager = await ethers.getContractAt("ERC20UtilityManager", env.PROXY_CONTRACT_ADDRESS);
-  const amount: BigNumber = utils.parseUnits("100", "ether");
-  console.log(await user.getAddress())
+  const bulkRole = await manager.BULK_ROLE();
+
   const dataRow: string = await manager.interface.encodeFunctionData(
-    "initialize",
-    [await user.getAddress(), amount]
+    "setupRole",
+    [bulkRole, await user.getAddress()]
   );
 
   const nonce: number = await deployer.getTransactionCount();

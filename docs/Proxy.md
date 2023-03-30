@@ -1,6 +1,6 @@
 # Solidity API
 
-## ERC20UtiltyManagerProxy
+## ERC20UtilityManagerProxy
 
 ### constructor
 
