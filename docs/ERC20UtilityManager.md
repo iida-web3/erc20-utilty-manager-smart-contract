@@ -56,12 +56,6 @@ function maxTransferAmount() public view returns (uint256)
 function setupRole(bytes32 role, address account) external
 ```
 
-### bulkSetupRole
-
-```solidity
-function bulkSetupRole(bytes32[] roles, address account) external
-```
-
 ### bulkWithdraw
 
 ```solidity

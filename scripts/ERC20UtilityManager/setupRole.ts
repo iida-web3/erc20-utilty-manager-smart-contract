@@ -1,16 +1,20 @@
 import { ethers } from "hardhat";
-import { env } from "./lib/config";
-import { contracts } from "../typechain-types";
-import { getEstimate, getFeeData, getSigners } from "./lib/web3Utility";
-import { BigNumber, providers, utils } from "ethers";
+import { env } from "../lib/config";
+import { contracts } from "../../typechain-types";
+import { getEstimate, getFeeData } from "../lib/web3Utility";
+import { providers } from "ethers";
 
-async function main(to: string[], amount: BigNumber[]) {
-  const [deployer, user] = await getSigners();
-  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt("ERC20UtilityManager", env.PROXY_CONTRACT_ADDRESS);
+async function main() {
+  const [deployer, user] = await ethers.getSigners();
+  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
+    "ERC20UtilityManager",
+    env.PROXY_CONTRACT_ADDRESS
+  );
+  const bulkRole = await manager.BULK_ROLE();
 
   const dataRow: string = await manager.interface.encodeFunctionData(
-    "bulkWithdraw",
-    [env.TESTTOKEN_CONTRACT_ADDRESS, to, amount]
+    "setupRole",
+    [bulkRole, await user.getAddress()]
   );
 
   const nonce: number = await deployer.getTransactionCount();
@@ -37,11 +41,7 @@ async function main(to: string[], amount: BigNumber[]) {
   await tx.wait();
 }
 
-const count = 55
-const to: string[] = new Array(count).fill("0x47b43c2f6d87ca769744dbb542ba721908457b89");
-const amount: BigNumber[] = new Array(count).fill(utils.parseUnits("0.001", 8));
-
-main(to, amount)
+main()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);

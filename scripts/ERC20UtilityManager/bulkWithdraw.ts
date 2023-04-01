@@ -1,17 +1,21 @@
 import { ethers } from "hardhat";
-import { env } from "./lib/config";
-import { contracts } from "../typechain-types";
-import { getEstimate, getFeeData } from "./lib/web3Utility";
-import { providers } from "ethers";
+import { env } from "../lib/config";
+import { contracts } from "../../typechain-types";
+import { getEstimate, getFeeData, getSigners } from "../lib/web3Utility";
+import { BigNumber, providers } from "ethers";
+import { amounts } from "./../lib/bulkWithdrawData/amounts";
+import { walletAddresses } from "../lib/bulkWithdrawData/walletAddresses";
 
-async function main() {
-  const [deployer, user] = await ethers.getSigners();
-  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt("ERC20UtilityManager", env.PROXY_CONTRACT_ADDRESS);
-  const bulkRole = await manager.BULK_ROLE();
+async function main(to: string[], amount: BigNumber[]) {
+  const [deployer] = await getSigners();
+  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
+    "ERC20UtilityManager",
+    env.PROXY_CONTRACT_ADDRESS
+  );
 
   const dataRow: string = await manager.interface.encodeFunctionData(
-    "setupRole",
-    [bulkRole, await user.getAddress()]
+    "bulkWithdraw",
+    [env.TESTTOKEN_CONTRACT_ADDRESS, to, amount]
   );
 
   const nonce: number = await deployer.getTransactionCount();
@@ -38,7 +42,7 @@ async function main() {
   await tx.wait();
 }
 
-main()
+main(walletAddresses, amounts)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
