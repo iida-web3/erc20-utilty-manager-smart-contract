@@ -54,8 +54,8 @@ async function multicall(data: string[]) {
       gasLimit: estimateGas,
       nonce: nonce,
       data: dataRow,
-      // maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
-      // maxFeePerGas: feeData.maxFeePerGas || 0,
+      maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
+      maxFeePerGas: feeData.maxFeePerGas || 0,
     });
 
     console.log(tx);
@@ -66,14 +66,13 @@ async function multicall(data: string[]) {
 }
 
 async function runMain() {
-  let arraycount = 13;
-  for (let index = 0; index < 3; index++) {
+  let arraycount = 10;
+  for (let index = 0; index < 4; index++) {
     const data = await generateBulkWithdraw(walletAddresses, amounts);
     const arrayData = new Array(arraycount).fill(data);
     console.log(walletAddresses.length * arraycount);
 
     await multicall(arrayData);
-    arraycount = 10;
   }
 }
 
