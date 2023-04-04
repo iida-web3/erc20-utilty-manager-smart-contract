@@ -12,25 +12,6 @@ import {
 
 async function main() {
   const [deployer] = await getSigners();
-  if (env.IS_MAINNET === "false") {
-    const MockERC20: TestToken__factory = await ethers.getContractFactory(
-      "TestToken"
-    );
-    const mockERC20: TestToken = await MockERC20.connect(deployer).deploy();
-    const testTokenTx: TestToken = await mockERC20.deployed();
-
-    console.log(
-      `
-        mockERC20 ${mockERC20.address}
-        `
-    );
-
-    console.log(
-      `
-      testTokenTx ${JSON.stringify(testTokenTx)}
-      `
-    )
-  }
 
   const erc20UtilityManager: ERC20UtilityManager__factory =
     await ethers.getContractFactory("ERC20UtilityManager");
@@ -42,19 +23,9 @@ async function main() {
   console.log(
     `ERC20UtilityManager deployed to ${deployERC20UtilityManager.address}`
   );
-
-  const erc20UtilityManagerProxy: ERC20UtilityManagerProxy__factory =
-    await ethers.getContractFactory("ERC20UtilityManagerProxy");
-  const deployProxy: ERC20UtilityManagerProxy = await erc20UtilityManagerProxy
-    .connect(deployer)
-    .deploy(deployERC20UtilityManager.address, []);
-  const proxyTx: ERC20UtilityManagerProxy = await deployProxy.deployed();
-
-  console.log(`deployProxy deployed to ${deployProxy.address}`);
   console.log(
     `
       erc20UtilityManagerTx ${JSON.stringify(erc20UtilityManagerTx)}
-      proxyTx ${JSON.stringify(proxyTx)}
       `
   );
 }

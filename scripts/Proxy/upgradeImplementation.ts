@@ -1,19 +1,21 @@
+import { Proxy } from '../../typechain-types/@openzeppelin/contracts/proxy/Proxy';
+import { Proxy__factory } from '../../typechain-types/factories/@openzeppelin/contracts/proxy/Proxy__factory';
 import { ethers } from "hardhat";
 import { env } from "../lib/config";
-import { contracts } from "../../typechain-types";
+import { ERC20UtilityManagerProxy, contracts } from "../../typechain-types";
 import { getEstimate, getFeeData, getSigners, parseUseErc20 } from "../lib/web3Utility";
 import { BigNumber, providers } from "ethers";
 
-async function main(amount: BigNumber) {
+async function main(newAddress: string) {
   const [deployer, user1] = await getSigners();
-  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
-    "ERC20UtilityManager",
+  const proxy: ERC20UtilityManagerProxy = await ethers.getContractAt(
+    "ERC20UtilityManagerProxy",
     env.PROXY_CONTRACT_ADDRESS
   );
 
-  const dataRow: string = await manager.interface.encodeFunctionData(
-    "withdraw",
-    [env.TESTTOKEN_CONTRACT_ADDRESS, await deployer.getAddress(), amount]
+  const dataRow: string = await proxy.interface.encodeFunctionData(
+    "upgradeImplementation",
+    [newAddress]
   );
 
   const nonce: number = await deployer.getTransactionCount();
@@ -21,14 +23,14 @@ async function main(amount: BigNumber) {
   const estimateGas: number = await getEstimate(
     nonce,
     await deployer.getAddress(),
-    manager.address,
+    proxy.address,
     dataRow
   );
 
   const feeData: providers.FeeData = await getFeeData();
   const tx: providers.TransactionResponse = await deployer.sendTransaction({
     from: await deployer.getAddress(),
-    to: manager.address,
+    to: proxy.address,
     gasLimit: estimateGas,
     nonce: nonce,
     data: dataRow,
@@ -40,9 +42,9 @@ async function main(amount: BigNumber) {
   await tx.wait();
 }
 
-const amount: BigNumber = parseUseErc20("400");
+const newAddress: string = "0x520d5F728fB308e4aF007D5Ec6cEbf3e2396E9EA";
 
-main(amount)
+main(newAddress)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
