@@ -33,6 +33,7 @@ const {
   USE_FIREBLOCKS,
   CHAIN_ID,
   DECIMALS,
+  MAX_BULK_SEND_COUNT,
 } = process.env;
 
 const addressZero = "0x0000000000000000000000000000000000000000";
@@ -80,4 +81,5 @@ export const env = {
   VAULT_ACCOUNTIDS: VAULT_ACCOUNTIDS || "",
   CHAIN_ID: Number(CHAIN_ID) || 0,
   USE_FIREBLOCKS: USE_FIREBLOCKS || "false",
+  MAX_BULK_SEND_COUNT: Number(MAX_BULK_SEND_COUNT) || 250,
 };

@@ -15,7 +15,7 @@ async function main() {
     "TestToken",
     env.TESTTOKEN_CONTRACT_ADDRESS
   );
-  const amount: BigNumber = parseUseErc20("10000000000");
+  const amount: BigNumber = parseUseErc20("1000");
 
   const dataRow: string = await erc20.interface.encodeFunctionData("transfer", [
     env.PROXY_CONTRACT_ADDRESS,

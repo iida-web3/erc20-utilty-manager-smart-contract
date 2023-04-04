@@ -8,22 +8,7 @@ import {
   getSigners,
 } from "../lib/web3Utility";
 import { BigNumber, providers } from "ethers";
-
 import { bulkWithdrawData } from "../lib/bulkWithdrawData/bulkWithdrawData";
-
-// async function makeData() {
-//   console.log("makeData()");
-//   const data = await generateBulkWithdraw(walletAddresses(), amounts);
-
-//   return new Array(13)
-//     .fill(data)
-//     .concat(
-//       await generateBulkWithdraw(
-//         walletAddresses().slice(0, 250),
-//         amounts.slice(0, 250)
-//       )
-//     );
-// }
 
 async function multicall(data: string[]) {
   const [deployer] = await getSigners();
@@ -69,28 +54,33 @@ async function multicall(data: string[]) {
 }
 
 async function runMain(addresses: string[], amounts: BigNumber[]) {
-  let arraycount = 1;
+  let arraycount = 3;
+  let multicallForCount =
+    addresses.length / env.MAX_BULK_SEND_COUNT / arraycount;
   let dumpAddress = addresses;
   let dumpAmounts = amounts;
 
-  const multicallData: string[] = new Array();
-  for (let i = 0; i < arraycount; i++) {
-    const inAddress = dumpAddress.slice(0, env.MAX_BULK_SEND_COUNT);
-    const inAmounts = dumpAmounts.slice(0, env.MAX_BULK_SEND_COUNT);
+  for (let i = 0; i < multicallForCount; i++) {
+    // make multicallData
+    const multicallData: string[] = new Array();
+    for (let i = 0; i < arraycount; i++) {
+      const inAddress = dumpAddress.slice(0, env.MAX_BULK_SEND_COUNT);
+      const inAmounts = dumpAmounts.slice(0, env.MAX_BULK_SEND_COUNT);
 
-    const data: string = await generateBulkWithdraw(inAddress, inAmounts);
+      const data: string = await generateBulkWithdraw(inAddress, inAmounts);
 
-    if (dumpAddress.length >= env.MAX_BULK_SEND_COUNT) {
-      dumpAddress = dumpAddress.slice(env.MAX_BULK_SEND_COUNT);
-      dumpAmounts = dumpAmounts.slice(env.MAX_BULK_SEND_COUNT);
+      if (dumpAddress.length >= env.MAX_BULK_SEND_COUNT) {
+        dumpAddress = dumpAddress.slice(env.MAX_BULK_SEND_COUNT);
+        dumpAmounts = dumpAmounts.slice(env.MAX_BULK_SEND_COUNT);
+      }
+
+      multicallData.push(data);
     }
 
-    multicallData.push(data);
+    console.log("送金人数", arraycount * env.MAX_BULK_SEND_COUNT);
+    console.log("残り送金人数", dumpAddress.length);
+    await multicall(multicallData);
   }
-
-  console.log("送金人数", arraycount * env.MAX_BULK_SEND_COUNT);
-  console.log("残り送金人数", dumpAddress.length);
-  await multicall(multicallData);
 }
 
 const [addresses, amounts] = bulkWithdrawData();

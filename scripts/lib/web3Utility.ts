@@ -7,6 +7,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Logger } from "@ethersproject/logger";
 const logger = new Logger(version);
 import { formatFixed, parseFixed } from "@ethersproject/bignumber";
+import { contracts } from "../../typechain-types";
 
 export const web3: Web3 = new Web3(
   new Web3.providers.HttpProvider(env.NODE_URL)
@@ -39,7 +40,7 @@ export async function getEstimate(
     to: to,
     value: value,
     data: data,
-    chainId: env.CHAIN_ID,
+    // chainId: env.CHAIN_ID,
   });
 
   return Math.floor(estimateGas * coefficient);
@@ -68,4 +69,20 @@ export async function getSigners(): Promise<Signer[]> {
     await user3.getAddress(),
   ]);
   return [deployer, user1, user2, user3];
+}
+
+export async function generateBulkWithdraw(
+  to: string[],
+  amount: BigNumber[]
+): Promise<string> {
+  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
+    "ERC20UtilityManager",
+    env.PROXY_CONTRACT_ADDRESS
+  );
+
+  return await manager.interface.encodeFunctionData("bulkWithdraw", [
+    env.TESTTOKEN_CONTRACT_ADDRESS,
+    to,
+    amount,
+  ]);
 }

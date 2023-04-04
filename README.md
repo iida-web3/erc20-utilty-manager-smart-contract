@@ -1,4 +1,11 @@
 # ERC20UtilityManager
+
+## Bulk系関数のCSVテンプレート
+
+```
+https://docs.google.com/spreadsheets/d/1GcWuM74oip6dzSNeWi73qCjY9tDAX-BZaiiPBJ5gnZ4/edit?usp=sharing
+```
+
 ## Local
 
 use env `.env.sample`
@@ -28,7 +35,7 @@ npx hardhat run --network local scripts/ERC20UtilityManager/getMaxTransferAmount
 use env `.env.mumbai.fireblocks.sample`
 
 ```shell
-npx hardhat run --network mumbai scripts/deployFireblocks.ts
+npx hardhat run --network mumbai scripts/deploy.ts
 npx hardhat run --network mumbai scripts/initialize.ts
 npx hardhat run --network mumbai scripts/bulkWithdraw.ts
 ```
@@ -48,7 +55,7 @@ npx hardhat run --network mumbai scripts/bulkWithdraw.ts
 use env `.env.polygon.fireblocks.sample`
 
 ```shell
-npx hardhat run --network polygon scripts/deployFireblocks.ts
+npx hardhat run --network polygon scripts/deploy.ts
 npx hardhat run --network polygon scripts/initialize.ts
 npx hardhat run --network polygon scripts/bulkWithdraw.ts
 ```

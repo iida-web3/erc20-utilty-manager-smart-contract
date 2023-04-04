@@ -5,7 +5,7 @@ import { getEstimate, getFeeData, getSigners } from "../lib/web3Utility";
 import { BigNumber, providers } from "ethers";
 import { bulkWithdrawData } from "../lib/bulkWithdrawData/bulkWithdrawData";
 
-async function main(addresses: string[], amounts: BigNumber[]) {
+async function bulkWithdraw(addresses: string[], amounts: BigNumber[]) {
   const [deployer] = await getSigners();
   const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
     "ERC20UtilityManager",
@@ -41,12 +41,39 @@ async function main(addresses: string[], amounts: BigNumber[]) {
   await tx.wait();
 }
 
+async function runMain(addresses: string[], amounts: BigNumber[]) {
+  let bulkWithdrawForCount = addresses.length / env.MAX_BULK_SEND_COUNT;
+  let dumpAddress = addresses;
+  let dumpAmounts = amounts;
+
+  console.log(`${bulkWithdrawForCount}回Loopします`);
+  console.log(`送金人数: ${addresses.length}`);
+  const total: BigNumber = amounts.reduce(
+    (acc: BigNumber, cur: BigNumber) => acc.add(cur),
+    BigNumber.from(0)
+  );
+  console.log(`合計送金トークン量: ${total}`);
+
+  for (let i = 0; i < bulkWithdrawForCount; i++) {
+    console.log(`${i + 1}回目bulkWithdraw`);
+    const inAddress = dumpAddress.slice(0, env.MAX_BULK_SEND_COUNT);
+    const inAmounts = dumpAmounts.slice(0, env.MAX_BULK_SEND_COUNT);
+
+    if (dumpAddress.length >= env.MAX_BULK_SEND_COUNT) {
+      dumpAddress = dumpAddress.slice(env.MAX_BULK_SEND_COUNT);
+      dumpAmounts = dumpAmounts.slice(env.MAX_BULK_SEND_COUNT);
+    }
+
+    console.log("送金人数", env.MAX_BULK_SEND_COUNT);
+    console.log("残り送金人数", dumpAddress.length);
+
+    await bulkWithdraw(inAddress, inAmounts);
+  }
+}
+
 const [addresses, amounts] = bulkWithdrawData();
 
-main(
-  addresses.slice(0, env.MAX_BULK_SEND_COUNT),
-  amounts.slice(0, env.MAX_BULK_SEND_COUNT)
-)
+runMain(addresses, amounts)
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
