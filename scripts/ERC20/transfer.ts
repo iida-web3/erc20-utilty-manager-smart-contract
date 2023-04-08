@@ -6,8 +6,8 @@ import {
   getEstimate,
   getFeeData,
   getSigners,
-  parseUseErc20,
 } from "../lib/web3Utility";
+import { bulkWithdrawData } from "../lib/bulkWithdrawData/bulkWithdrawData";
 
 async function main() {
   const [deployer] = await getSigners();
@@ -15,7 +15,15 @@ async function main() {
     "TestToken",
     env.TESTTOKEN_CONTRACT_ADDRESS
   );
-  const amount: BigNumber = parseUseErc20("1000");
+
+  const [addresses, amounts] = bulkWithdrawData();
+
+  const amount: BigNumber = amounts.reduce(
+    (acc: BigNumber, cur: BigNumber) => acc.add(cur),
+    BigNumber.from(0)
+  );
+
+  console.log(amount);
 
   const dataRow: string = await erc20.interface.encodeFunctionData("transfer", [
     env.PROXY_CONTRACT_ADDRESS,

@@ -1,13 +1,8 @@
 import { ethers } from "hardhat";
-import { env } from "./lib/config";
 import { getSigners } from "./lib/web3Utility";
 import {
   ERC20UtilityManager,
-  ERC20UtilityManagerProxy,
-  ERC20UtilityManagerProxy__factory,
   ERC20UtilityManager__factory,
-  TestToken,
-  TestToken__factory,
 } from "../typechain-types";
 
 async function main() {

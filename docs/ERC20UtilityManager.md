@@ -2,6 +2,18 @@
 
 ## ERC20UtilityManager
 
+### Withdrew
+
+```solidity
+event Withdrew(address sender, uint256 amount, address token)
+```
+
+### BulkWithdrewForEach
+
+```solidity
+event BulkWithdrewForEach(address sender, uint256 amount, address token)
+```
+
 ### BULK_ROLE
 
 ```solidity
@@ -11,7 +23,7 @@ bytes32 BULK_ROLE
 ### initialize
 
 ```solidity
-function initialize(address bulkAccount, uint256 _maxTransferAmount) public
+function initialize(address _bulkAccount, uint256 _maxTransferAmount) public
 ```
 
 ### onlyAdmin
@@ -23,7 +35,7 @@ modifier onlyAdmin()
 ### onlyPermited
 
 ```solidity
-modifier onlyPermited(bytes32 role)
+modifier onlyPermited(bytes32 _role)
 ```
 
 ### checkLength
@@ -41,7 +53,7 @@ function version() public pure returns (string)
 ### setMaxTransferAmount
 
 ```solidity
-function setMaxTransferAmount(uint256 value) public
+function setMaxTransferAmount(uint256 _value) public
 ```
 
 ### maxTransferAmount
@@ -53,7 +65,7 @@ function maxTransferAmount() public view returns (uint256)
 ### setupRole
 
 ```solidity
-function setupRole(bytes32 role, address account) external
+function setupRole(bytes32 _role, address _account) external
 ```
 
 ### bulkWithdraw

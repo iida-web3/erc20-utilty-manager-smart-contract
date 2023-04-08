@@ -1,10 +1,12 @@
-import { Proxy } from '../../typechain-types/@openzeppelin/contracts/proxy/Proxy';
-import { Proxy__factory } from '../../typechain-types/factories/@openzeppelin/contracts/proxy/Proxy__factory';
 import { ethers } from "hardhat";
 import { env } from "../lib/config";
-import { ERC20UtilityManagerProxy, contracts } from "../../typechain-types";
-import { getEstimate, getFeeData, getSigners, parseUseErc20 } from "../lib/web3Utility";
-import { BigNumber, providers } from "ethers";
+import { ERC20UtilityManagerProxy } from "../../typechain-types";
+import {
+  getEstimate,
+  getFeeData,
+  getSigners,
+} from "../lib/web3Utility";
+import { providers } from "ethers";
 
 async function main(newAddress: string) {
   const [deployer, user1] = await getSigners();

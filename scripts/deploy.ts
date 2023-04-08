@@ -29,7 +29,7 @@ async function main() {
       `
       testTokenTx ${JSON.stringify(testTokenTx)}
       `
-    )
+    );
   }
 
   const erc20UtilityManager: ERC20UtilityManager__factory =
