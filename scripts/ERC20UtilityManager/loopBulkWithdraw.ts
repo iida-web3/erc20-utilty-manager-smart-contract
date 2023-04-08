@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { env } from "../lib/config";
 import { contracts } from "../../typechain-types";
 import { getEstimate, getFeeData, getSigners } from "../lib/web3Utility";
-import { BigNumber, providers, utils } from "ethers";
+import { BigNumber, providers } from "ethers";
 import { bulkWithdrawData } from "../lib/bulkWithdrawData/bulkWithdrawData";
 
 async function bulkWithdraw(addresses: string[], amounts: BigNumber[]) {
@@ -19,23 +19,22 @@ async function bulkWithdraw(addresses: string[], amounts: BigNumber[]) {
 
   const nonce: number = await deployer.getTransactionCount();
 
-  // const estimateGas: number = await getEstimate(
-  //   nonce,
-  //   await deployer.getAddress(),
-  //   manager.address,
-  //   dataRow
-  // );
+  const estimateGas: number = await getEstimate(
+    nonce,
+    await deployer.getAddress(),
+    manager.address,
+    dataRow
+  );
 
-  // const feeData: providers.FeeData = await getFeeData();
+  const feeData: providers.FeeData = await getFeeData();
   const tx: providers.TransactionResponse = await deployer.sendTransaction({
     from: await deployer.getAddress(),
     to: manager.address,
-    // gasLimit: estimateGas,
-    gasPrice: utils.parseUnits("400", "gwei"),
+    gasLimit: estimateGas,
     nonce: nonce,
     data: dataRow,
-    // maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
-    // maxFeePerGas: feeData.maxFeePerGas || 0,
+    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
+    maxFeePerGas: feeData.maxFeePerGas || 0,
   });
 
   console.log(tx);
