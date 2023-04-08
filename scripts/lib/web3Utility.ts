@@ -1,13 +1,14 @@
 import { env } from "./config";
 import Web3 from "web3";
-import { BigNumber, providers, Signer, version } from "ethers";
+import { BigNumber, providers, Signer, utils, version } from "ethers";
 import { ethers } from "hardhat";
 import { fireblocksSigner } from "./fireblocksUtility";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Logger } from "@ethersproject/logger";
 const logger = new Logger(version);
-import { formatFixed, parseFixed } from "@ethersproject/bignumber";
+import { parseFixed } from "@ethersproject/bignumber";
 import { contracts } from "../../typechain-types";
+const MAX_GET_EVENTS_AMOUNT: number = env.MAX_BULK_SEND_COUNT;
 
 export const web3: Web3 = new Web3(
   new Web3.providers.HttpProvider(env.NODE_URL)
@@ -85,4 +86,104 @@ export async function generateBulkWithdraw(
     to,
     amount,
   ]);
+}
+
+export async function getLatestBlockNumber(): Promise<number> {
+  const blockNumber = await HTTPSProvider.getBlockNumber();
+  return blockNumber;
+}
+
+export async function getERC20UtilityManagerInitializedBlockNumber(
+  contractAddress: string
+): Promise<number> {
+  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
+    "ERC20UtilityManager",
+    env.PROXY_CONTRACT_ADDRESS
+  );
+
+  const filter = {
+    address: contractAddress,
+    fromBlock: env.EVENT_FIRST_BLOCK,
+    topics: [utils.id("Initialized(uint8)")],
+  };
+
+  const logs = await HTTPSProvider.getLogs(filter);
+  const blockNumber: number[] = logs.map((log) => log.blockNumber);
+
+  return blockNumber[0];
+}
+
+export async function getTokenInfo(tokenAddress: string): Promise<TokenInfo> {
+  const erc20: contracts.TestToken = await ethers.getContractAt(
+    "TestToken",
+    tokenAddress
+  );
+
+  const name: string = await erc20.name();
+  const symbol: string = await erc20.symbol();
+  const totalSupply: BigNumber = await erc20.totalSupply();
+
+  return {
+    address: tokenAddress,
+    name: name,
+    symbol: symbol,
+    totalSupply: totalSupply,
+  };
+}
+
+export async function getBulkWithdrewEvents(
+  fromBlock: number,
+  toBlock: number
+): Promise<BulkWithdrewEventsResponse> {
+  const manager: contracts.ERC20UtilityManager = await ethers.getContractAt(
+    "ERC20UtilityManager",
+    env.PROXY_CONTRACT_ADDRESS
+  );
+
+  let events: any[] = new Array();
+  let tokenInfo: TokenInfo | undefined;
+
+  for (let i = fromBlock; i < toBlock; i = i + MAX_GET_EVENTS_AMOUNT) {
+    const filter = {
+      address: manager.address,
+      topics: [utils.id("BulkWithdrewForEach(address,uint256,address)")],
+      fromBlock: i,
+      toBlock: i + MAX_GET_EVENTS_AMOUNT,
+    };
+
+    const rowLogs = await HTTPSProvider.getLogs(filter);
+
+    for (let n_i = 0; n_i < rowLogs.length; n_i++) {
+      const parsedLog = await manager.interface.parseLog(rowLogs[n_i]);
+      const walletAddress = parsedLog.args.sender.toString();
+      const parseAmount =
+        parsedLog.args.amount.toNumber() * 10 ** -env.DECIMALS;
+
+      const result: [string, number] = [walletAddress, parseAmount];
+      events.push(result);
+
+      // check token
+      if (!tokenInfo?.name) {
+        const tokenAddress = parsedLog.args.token.toString();
+        tokenInfo = await getTokenInfo(tokenAddress);
+      }
+    }
+  }
+
+  return {
+    events: events,
+    tokenInfo: tokenInfo,
+  };
+}
+
+export interface TokenInfo {
+  address: string;
+  name: string;
+  symbol: string;
+  totalSupply: BigNumber;
+}
+
+export interface BulkWithdrewEventsResponse {
+  events: any[];
+  tokenInfo?: TokenInfo;
 }

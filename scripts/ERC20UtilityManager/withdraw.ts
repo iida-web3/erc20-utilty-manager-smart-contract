@@ -1,7 +1,12 @@
 import { ethers } from "hardhat";
 import { env } from "../lib/config";
 import { contracts } from "../../typechain-types";
-import { getEstimate, getFeeData, getSigners, parseUseErc20 } from "../lib/web3Utility";
+import {
+  getEstimate,
+  getFeeData,
+  getSigners,
+  parseUseErc20,
+} from "../lib/web3Utility";
 import { BigNumber, providers } from "ethers";
 
 async function main(amount: BigNumber) {

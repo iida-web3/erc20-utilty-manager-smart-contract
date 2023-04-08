@@ -12,8 +12,16 @@ contract ERC20UtilityManager is
 {
 	using SafeERC20 for IERC20;
 
-	event Withdrew(address indexed sender, uint256 amount, address token);
-	event BulkWithdrewForEach(address indexed sender, uint256 amount, address token);
+	event Withdrew(
+		address indexed sender,
+		uint256 amount,
+		address token
+	);
+	event BulkWithdrewForEach(
+		address indexed sender,
+		uint256 amount,
+		address token
+	);
 
 	bytes32 public constant BULK_ROLE = keccak256("BULK_ROLE");
 	uint256 private MAX_TRANSFER_AMOUNT;
@@ -96,7 +104,11 @@ contract ERC20UtilityManager is
 				_amounts[i]
 			);
 
-			emit BulkWithdrewForEach(_recipients[i], _amounts[i], _tokenAddress);
+			emit BulkWithdrewForEach(
+				_recipients[i],
+				_amounts[i],
+				_tokenAddress
+			);
 		}
 	}
 
