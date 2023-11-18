@@ -38,8 +38,8 @@ async function main() {
     gasLimit: estimateGas,
     nonce: nonce,
     data: dataRow,
-    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
-    maxFeePerGas: feeData.maxFeePerGas || 0,
+    //maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
+    //maxFeePerGas: feeData.maxFeePerGas || 0,
   });
 
   console.log(tx);

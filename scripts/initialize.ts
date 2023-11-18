@@ -15,7 +15,7 @@ async function main() {
     "ERC20UtilityManager",
     env.PROXY_CONTRACT_ADDRESS
   );
-  const amount: BigNumber = parseUseErc20("50");
+  const amount: BigNumber = parseUseErc20("100");
 
   const dataRow: string = await manager.interface.encodeFunctionData(
     "initialize",
@@ -38,8 +38,8 @@ async function main() {
     gasLimit: estimateGas,
     nonce: nonce,
     data: dataRow,
-    maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
-    maxFeePerGas: feeData.maxFeePerGas || 0,
+    //maxPriorityFeePerGas: feeData.maxPriorityFeePerGas || 0,
+    //maxFeePerGas: feeData.maxFeePerGas || 0,
   });
 
   console.log(tx);
